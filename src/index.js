@@ -1,28 +1,56 @@
 import { createStore } from "redux";
 
-const add = document.getElementById("add");
-const minus = document.getElementById("minus");
-const number = document.querySelector("span");
+const form = document.querySelector("form");
+const input = document.querySelector("input");
+const ul = document.querySelector("ul");
 
-const ADD = "ADD";
-const MINUS = "MINUS";
+const ADD_TODO = "ADD_TODO";
+const DELETE_TODO = "DELETE_TODO";
 
-const countModifier = (count = 0, action) => {
-  switch (action.type) {
-    case ADD:
-      return (count += 1);
-    case MINUS:
-      return (count -= 1);
+const getAddToDoReducerAction = (text) => ({
+  type: ADD_TODO,
+  id: Date.now(),
+  data: text,
+});
+const getDeleteToDoReducerAction = (id) => ({ type: DELETE_TODO, id });
+
+const reducer = (state = [], { type, ...data }) => {
+  switch (type) {
+    case ADD_TODO:
+      return [data, ...state];
+    case DELETE_TODO:
+      return state.filter((text) => text.id !== data.id);
     default:
-      return count;
+      return state;
+  }
+};
+const store = createStore(reducer);
+store.subscribe(() => paintToDos());
+
+const onClick = (e) => {
+  const id = parseInt(e.target.parentNode.id);
+  store.dispatch(getDeleteToDoReducerAction(id));
+};
+const paintToDos = () => {
+  ul.innerHTML = "";
+  const toDos = store.getState();
+  for (const { id, data } of toDos) {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.innerText = "Del";
+    btn.addEventListener("click", onClick);
+    li.id = id;
+    li.innerText = data;
+    li.appendChild(btn);
+    ul.appendChild(li);
   }
 };
 
-const countStore = createStore(countModifier);
-const onChange = () => (number.innerText = countStore.getState());
-countStore.subscribe(onChange);
-const handleAdd = () => countStore.dispatch({ type: ADD });
-const handleMinus = () => countStore.dispatch({ type: MINUS });
+const onSubmit = (e) => {
+  e.preventDefault();
+  const toDo = input.value;
+  input.value = "";
+  store.dispatch(getAddToDoReducerAction(toDo));
+};
 
-add.addEventListener("click", handleAdd);
-minus.addEventListener("click", handleMinus);
+form.addEventListener("submit", onSubmit);
