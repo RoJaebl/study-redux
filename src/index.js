@@ -4,10 +4,18 @@ const form = document.querySelector("form");
 const input = document.querySelector("input");
 const ul = document.querySelector("ul");
 
-const reducer = (state = "", { type }) => {
-  console.log(type);
+const reducer = (state = [], { type }) => {
+  return type;
 };
 const store = createStore(reducer);
+store.subscribe(() => paintToDos());
+
+const paintToDos = () => {
+  const li = document.createElement("li");
+  const toDos = store.getState();
+  li.innerText = toDos;
+  ul.appendChild(li);
+};
 
 const onSubmit = (e) => {
   e.preventDefault();
