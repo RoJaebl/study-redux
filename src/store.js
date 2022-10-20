@@ -13,7 +13,7 @@ const reducer = (state = [], { type, ...data }) => {
     case DELETE:
       return state.filter(({ id }) => id !== data.id);
     default:
-      return;
+      return state;
   }
 };
 const store = createStore(reducer);
