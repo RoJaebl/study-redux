@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { getAddAction, getDeleteAction } from "../store";
+import { getAddAction } from "../store";
+import ToDo from "../components/ToDo";
 
 const Home = ({ getState, addToDo, deleteToDo }) => {
   const [text, setText] = useState("");
@@ -19,13 +20,16 @@ const Home = ({ getState, addToDo, deleteToDo }) => {
         <input text="text" value={text} onChange={onChange}></input>
         <button>Add</button>
       </form>
-      <ul></ul>
+      <ul>
+        {getState.map((toDo) => (
+          <ToDo key={toDo.id} {...toDo} />
+        ))}
+      </ul>
     </>
   );
 };
 const mapStateToProps = (state, ownProps) => ({ getState: state });
 const mapDispatchToProps = (dispatch, ownProps) => ({
   addToDo: (text) => dispatch(getAddAction(text)),
-  deleteToDo: (id) => dispatch(getDeleteAction(id)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
