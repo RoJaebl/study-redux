@@ -1,11 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { getDeleteAction } from "../store";
 
-function ToDo({ text, deleteToDo }) {
+function ToDo({ text, deleteToDo, id }) {
   return (
     <li>
-      {text}
+      <Link to={`/${id}`}>{text}</Link>
       <button onClick={deleteToDo}>Del</button>
     </li>
   );

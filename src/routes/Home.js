@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { getAddAction } from "../store";
 import ToDo from "../components/ToDo";
 
-const Home = ({ getState, addToDo, deleteToDo }) => {
+const Home = ({ getState, addToDo }) => {
   const [text, setText] = useState("");
   function onChange(e) {
     setText(e.target.value);
