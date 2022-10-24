@@ -1,5 +1,4 @@
-import { createStore } from "redux";
-import { createAction, createReducer } from "@reduxjs/toolkit";
+import { configureStore, createAction, createReducer } from "@reduxjs/toolkit";
 
 const STORE = "store";
 
@@ -23,6 +22,6 @@ const reducer = createReducer([], (builder) => {
 });
 
 const storage = window.localStorage;
-const store = createStore(reducer);
+const store = configureStore({ reducer });
 
 export default store;
