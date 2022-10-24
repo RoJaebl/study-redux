@@ -1,27 +1,26 @@
 import { createStore } from "redux";
+import { createAction, createReducer } from "@reduxjs/toolkit";
 
-const ADD = "ADD";
-const DELETE = "DELETE";
 const STORE = "store";
 
-export const getAddAction = (text) => ({ type: ADD, id: Date.now(), text });
-export const getDeleteAction = (id) => ({ type: DELETE, id });
+export const getAddAction = createAction("ADD");
+export const getDeleteAction = createAction("DELETE");
 
 const getItem = () => JSON.parse(storage.getItem(STORE));
 const setItem = (item) => storage.setItem(STORE, JSON.stringify(item));
 
-const reducer = (state = [], { type, ...data }) => {
-  switch (type) {
-    case ADD:
-      setItem([data, ...state]);
+const reducer = createReducer([], (builder) => {
+  builder
+    .addCase(getAddAction, (state, { type, payload }) => {
+      setItem([{ id: Date.now(), text: payload }, ...state]);
       return getItem();
-    case DELETE:
-      setItem(state.filter(({ id }) => id !== data.id));
+    })
+    .addCase(getDeleteAction, (state, { type, payload }) => {
+      setItem(state.filter(({ id }) => id !== payload));
       return getItem();
-    default:
-      return getItem();
-  }
-};
+    })
+    .addDefaultCase(() => getItem());
+});
 
 const storage = window.localStorage;
 const store = createStore(reducer);
