@@ -1,27 +1,25 @@
-import { configureStore, createAction, createReducer } from "@reduxjs/toolkit";
+import { configureStore, createSlice } from "@reduxjs/toolkit";
 
 const STORE = "store";
 
-export const getAddAction = createAction("ADD");
-export const getDeleteAction = createAction("DELETE");
-
+const storage = window.localStorage;
 const getItem = () => JSON.parse(storage.getItem(STORE));
 const setItem = (item) => storage.setItem(STORE, JSON.stringify(item));
 
-const reducer = createReducer([], (builder) => {
-  builder
-    .addCase(getAddAction, (state, { type, payload }) => {
+const toDos = createSlice({
+  name: "toDosReduxer",
+  initialState: getItem(),
+  reducers: {
+    add: (state, { type, payload }) => {
       setItem([{ id: Date.now(), text: payload }, ...state]);
       return getItem();
-    })
-    .addCase(getDeleteAction, (state, { type, payload }) => {
+    },
+    remove: (state, { type, payload }) => {
       setItem(state.filter(({ id }) => id !== payload));
       return getItem();
-    })
-    .addDefaultCase(() => getItem());
+    },
+  },
 });
 
-const storage = window.localStorage;
-const store = configureStore({ reducer });
-
-export default store;
+export const { add: getAddAction, remove: getDeleteAction } = toDos.actions;
+export default configureStore({ reducer: toDos.reducer });
